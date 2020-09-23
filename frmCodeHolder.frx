@@ -1,0 +1,210 @@
+ÿ†Function FormIsLoaded(ByVal form_name As String) As Boolean
+Dim i As Integer
+
+    ' Assume we will not find it.
+    FormIsLoaded = False
+
+    ' Search the loaded forms.
+    For i = 0 To Forms.Count - 1
+        If Forms(i).Name = form_name Then
+            ' We found it. Return True
+            FormIsLoaded = True
+            Exit For
+        End If
+    Next i
+End Function
+\ If Not (IsNumeric(Chr$(KeyAscii))) And Not (KeyAscii = 8) Then
+    KeyAscii = 0
+ End If
+ÌPrivate function twip2PixX(twipVal&)
+    twip2PixX = (twipval/screen.twipsperpixelX)
+End function
+
+Private function twip2PixY(twipVal&)
+    twip2PixY = (twipval/screen.twipsperpixelY)
+End function
+ÿ†Function FormIsLoaded(ByVal form_name As String) As Boolean
+Dim i As Integer
+
+    ' Assume we will not find it.
+    FormIsLoaded = False
+
+    ' Search the loaded forms.
+    For i = 0 To Forms.Count - 1
+        If Forms(i).Name = form_name Then
+            ' We found it. Return True
+            FormIsLoaded = True
+            Exit For
+        End If
+    Next i
+End Function
+ÿ>Declare Function OleTranslateColor Lib "OLEPRO32.DLL" (ByVal OLE_COLOR As Long, ByVal HPALETTE As Long, pccolorref As Long) As Long
+
+Function ColorToHTML(ByVal color As Long) As String
+    ' HTML color codes are in the format #RRGGBB (red, green, blue)
+    ' while Hex(color) returns numbers in the format BBGGRR
+    ' therefore we just have to invert the order of the
+    ' hex values of red and blue
+    Dim tmp As String
+    tmp = Right$("00000" & Hex$(color), 6)
+    ColorToHTML = "#" & Right$(tmp, 2) & Mid$(tmp, 3, 2) & Left$(tmp, 2)
+End Function
+
+' convert a VB color constant to a COLORREF
+' accepts both RGB() values and system color constants
+Function TranslateColor(ByVal clr As Long) As Long
+    If OleTranslateColor(clr, 0, TranslateColor) Then
+         TranslateColor = -1
+    End If
+End Function
+ÿy
+Declare Function SetWindowLong Lib "user32" Alias "SetWindowLongA" (ByVal hwnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
+Declare Function CallWindowProc Lib "user32" Alias "CallWindowProcA" (ByVal lpPrevWndFunc As Long, ByVal hwnd As Long, ByVal Msg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
+Declare Function SetClipboardViewer Lib "user32" (ByVal hwnd As Long) As Long
+ 
+Private Const GWL_WNDPROC = (-4)
+
+Dim PrevProc As Long
+
+Public Sub subclass_start(lhwnd As Long)
+
+    On Error Resume Next
+    If PrevProc = 0 Then
+       PrevProc = SetWindowLong(lhwnd, GWL_WNDPROC, AddressOf WindowProc)
+    End If
+    
+End Sub
+
+Public Sub subclass_end(lhwnd As Long)
+    
+    On Error Resume Next
+    If PrevProc <> 0 Then
+        SetWindowLong lhwnd, GWL_WNDPROC, PrevProc
+    End If
+    
+End Sub
+
+Public Function WindowProc(ByVal hwnd As Long, ByVal uMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
+   
+    On Error Resume Next
+    WindowProc = CallWindowProc(PrevProc, hwnd, uMsg, wParam, lParam)
+    
+    'If uMsg =   then
+    
+    'End if
+
+End Function
+ÿl'-- check to see if item is array or array is initialized
+Function is_arr_initialized(varArray As Variant) As Boolean
+Dim Upper As Integer
+On Error Resume Next
+ 
+  Upper = UBound(varArray)
+  
+  If Err.Number Then
+     If Err.Number = 9 Then
+       is_arr_initialized = False
+     End If
+  Else
+     is_arr_initialized = True
+  End If
+
+End Function
+ÿ›Const WM_NCLBUTTONDOWN As Long = &HA1
+Const HTCAPTION As Long = 2
+Declare Sub ReleaseCapture Lib "User32" ()
+Declare Function SendMessage Lib "user32" Alias "SendMessageA" (ByVal hwnd As Long, ByVal wMsg As Long, ByVal wParam As Long, lParam As Any) As Long
+
+
+sub MoveItem(item_hwnd as long)
+on error resume next
+    ReleaseCapture
+    SendMessage item_hwnd, WM_NCLBUTTONDOWN,  HTCAPTION, 0&
+end sub
+ÿ†
+ 
+Declare Function GetWindow Lib "user32" (ByVal hwnd As Long, ByVal wCmd As Long) As Long
+Declare Function GetClassName Lib "user32" Alias "GetClassNameA" (ByVal hwnd As Long, ByVal lpClassName As String, ByVal nMaxCount As Long) As Long
+Declare Function GetWindowDC Lib "user32" (ByVal hwnd As Long) As Long
+Dim m_thisHwnd As Long 'read only
+Dim m_thisDC As Long 'read only
+
+ 
+' Find the child window with class name "Shell Embedding".
+Private Sub GetWebHwnd()
+  Const GW_CHILD As Long = 5
+  Const GW_HWNDNEXT As Long = 2
+  Dim child_hwnd As Long
+  Dim class_name As String * 256
+
+  child_hwnd = GetWindow(hwnd, GW_CHILD)
+  Do
+      ' See if this is the target class.
+      GetClassName child_hwnd, class_name, 256
+      If Left$(class_name, Len("Shell Embedding")) = _
+          "Shell Embedding" Then
+          ' store the hwnd in member var
+          m_thisHwnd = child_hwnd
+          'lets get the hdc while we are at it
+          m_thisDC = GetWindowDC(m_thisHwnd)
+          Exit Do
+      End If
+
+      ' Get the next child.
+      child_hwnd = GetWindow(child_hwnd, GW_HWNDNEXT)
+   Loop While child_hwnd <> 0
+End Sub
+ÿ²Declare Function GetMenu Lib "user32" Alias "GetMenu" (ByVal hwnd As Long) As Long
+Declare Function GetSubMenu Lib "user32" Alias "GetSubMenu" (ByVal hMenu As Long, ByVal nPos As Long) As Long
+Declare Function GetMenuItemCount Lib "user32" Alias "GetMenuItemCount" (ByVal hMenu As Long) As Long
+Declare Function GetMenuItemID Lib "user32" Alias "GetMenuItemID" (ByVal hMenu As Long, ByVal nPos As Long) As Long
+Declare Function GetMenuString Lib "user32" Alias "GetMenuStringA" (ByVal hMenu As Long, ByVal wIDItem As Long, ByVal lpString As String, ByVal nMaxCount As Long, ByVal wFlag As Long) As Long
+Declare Function ModifyMenu Lib "user32" Alias "ModifyMenuA" (ByVal hMenu As Long, ByVal nPosition As Long, ByVal wFlags As Long, ByVal wIDNewItem As Long, ByVal lpString As Any) As Long
+
+
+Private Sub subMakeMenuColumns(mnuIndex&, mnuItemsPerColumn&)
+Dim Buffer$, mnuItemText$
+Dim i%, mnuItemCnt%
+Dim mnuItemID&, hMenu&, hSubMenu&, Result&
+ 
+    'Get the hwnd of the menu
+   hMenu = GetMenu(Me.hwnd)
+    'Get the hwnd of the submenu
+   hSubMenu = GetSubMenu(hMenu, mnuIndex)
+    'number of subitems in the menu
+   mnuItemCnt = GetMenuItemCount(hSubMenu)
+   
+   'make the API window menu 2 columns because its so long
+   For i = mnuItemsPerColumn& To mnuItemCnt Step mnuItemsPerColumn&
+        'create MT string ready for data
+        Buffer = Space$(256)
+        Result = GetMenuString(hSubMenu, (i - 1), Buffer, Len(Buffer), &H400&)
+        mnuItemText = Left$(Buffer, Result)
+        mnuItemID = GetMenuItemID(hSubMenu, (i - 1))
+        'Modify the menu to a column menu
+        Call ModifyMenu(hSubMenu, (i - 1), &H400& Or &H20&, mnuItemID, mnuItemText)
+   Next i
+   
+End Sub
+ÿ/'mod level declarations
+Declare Function BringWindowToTop Lib "user32" (ByVal hWnd As Long) As Long
+Declare Function SetWindowPos Lib "user32" (ByVal hWnd As Long, ByVal hWndInsertAfter As Long, ByVal X As Long, ByVal Y As Long, ByVal cx As Long, ByVal cy As Long, ByVal wFlags As Long) As Long
+Const SWP_ONTOP = (&H1 Or &H2)
+
+
+'bring [hWndToLock ] window to top
+Function LockWindowToTop(hWndToLock As Long)
+   SetWindowPos hWndToLock, -1, 0, 0, 0, 0, SWP_ONTOP
+End Function
+
+
+Function UnlockWindowFromTop(hWndToUnlock, bKeepFloating As Boolean)
+'remove [hWndToUnlock] fromt he top with the option to
+'temporarily keep on top til another window gets focus
+  SetWindowPos hWndToUnlock, 1, 0, 0, 0, 0, SWP_ONTOP
+
+  If bKeepFloating Then
+     BringWindowToTop hWndToUnlock
+  End If
+
+End Function
